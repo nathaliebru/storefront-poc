@@ -1,8 +1,9 @@
-import { gql } from 'graphql-request';
-import Image from 'next/image';
 import Link from 'next/link';
 
+import { CategoryInterface } from '@/types/category';
+import { categoryQuery } from '@/services/graphql/queries/category-query';
 import { client } from '@/services/graphql/graphql-request-client';
+import { ProductCard } from '@/components/product-card';
 
 export default async function Category({
   params,
@@ -11,54 +12,25 @@ export default async function Category({
 }) {
   const { category } = await params;
 
-  const productsQuery = gql`
-    query categories($category: String!) {
-      category(where: { slug: $category }) {
-        products {
-          id
-          image {
-            url
-          }
-          price
-          rating
-          slug
-          title
-        }
-        title
-      }
-    }
-  `;
-
-  const data = await client.request<{
-    category: {
-      products: {
-        id: string;
-        image: { url: string };
-        price: string;
-        rating: string;
-        slug: string;
-        title: string;
-      }[];
-      title: string;
-    };
-  }>(productsQuery, { category });
+  const data = await client.request<CategoryInterface>(categoryQuery, {
+    category,
+  });
 
   return (
     <div>
-      <h1>{data.category.title}</h1>
-      {data.category.products.map((product) => (
-        <Link href={`${category}/${product.slug}`} key={product.id}>
-          <p>{product.title}</p>
-          <Image
-            alt={`Image of ${product.title}`}
-            height={100}
-            src={product.image.url}
-            width={100}
-          />
-          <p>{product.price}</p>
-          <p>{product.rating}</p>
-        </Link>
-      ))}
+      <h1 className="mb-2">{data.category.title}</h1>
+      <p className="mb-4">{data.category.description}</p>
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-4">
+        {data.category.products.map((product) => (
+          <Link
+            className="border rounded-lg border-gray-300 p-4"
+            href={`${category}/${product.slug}`}
+            key={product.id}
+          >
+            <ProductCard product={product} />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }
