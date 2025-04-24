@@ -1,9 +1,11 @@
 import Link from 'next/link';
 
-import type { Category } from '@/types/category';
-import { categoryQuery } from '@/services/graphql/queries/category-query';
-import { client } from '@/services/graphql/graphql-request-client';
+import { categoryQuery } from '@/graphql/queries/category-query';
+import { client } from '@/graphql/graphql-request-client';
+
 import { ProductCard } from '@/components/product-card';
+
+import type { Category } from '@/types/category';
 
 export default async function Category({
   params,
@@ -12,14 +14,11 @@ export default async function Category({
 }) {
   const { category } = await params;
 
-  const categoryData = await client.request<{ category: Category }>(
-    categoryQuery,
-    {
-      category,
-    },
-  );
-
-  const currentCategory = categoryData.category;
+  const { category: currentCategory } = await client.request<{
+    category: Category;
+  }>(categoryQuery, {
+    category,
+  });
 
   return (
     <>

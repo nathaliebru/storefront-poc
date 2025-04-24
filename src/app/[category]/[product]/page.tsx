@@ -1,11 +1,13 @@
 import Image from 'next/image';
 
-import { categoriesQuery } from '@/services/graphql/queries/categories-query';
-import { Category } from '@/types/category';
-import { client } from '@/services/graphql/graphql-request-client';
-import type { Product } from '@/types/product';
-import { productQuery } from '@/services/graphql/queries/product-query';
+import { categoriesQuery } from '@/graphql/queries/categories-query';
+import { client } from '@/graphql/graphql-request-client';
+import { productQuery } from '@/graphql/queries/product-query';
+
 import { StarRating } from '@/components/star-rating';
+
+import type { Category } from '@/types/category';
+import type { Product } from '@/types/product';
 
 export async function generateStaticParams() {
   const { categories } = await client.request<{
@@ -27,27 +29,32 @@ export default async function Product({
 }) {
   const { product } = await params;
 
-  const { products } = await client.request<{ products: Product[] }>(
-    productQuery,
-    { product },
-  );
-
-  const currentProduct = products[0];
+  const {
+    product: {
+      description,
+      image: { url },
+      price,
+      rating,
+      title,
+    },
+  } = await client.request<{
+    product: Product;
+  }>(productQuery, { product });
 
   return (
     <div className="md:grid md:grid-cols-2 md:mt-7">
       <Image
-        className="m-auto mt-10 mb-10 md:m-0 md:h-fit md:w-fit md:justify-self-center"
-        alt={`Image of ${currentProduct.title}`}
+        className="mx-auto my-10 md:m-0 md:h-fit md:w-fit md:justify-self-center"
+        alt={`Image of ${title}`}
         height={250}
-        src={currentProduct.image.url}
+        src={url}
         width={250}
       />
       <div>
-        <h1>{currentProduct.title}</h1>
-        <StarRating rating={currentProduct.rating} />
-        <p className="text-xl font-medium mt-4 mb-4">€{currentProduct.price}</p>
-        <p>{currentProduct.description}</p>
+        <h1>{title}</h1>
+        <StarRating rating={rating} />
+        <p className="text-xl font-medium my-4">€{price}</p>
+        <p>{description}</p>
       </div>
     </div>
   );

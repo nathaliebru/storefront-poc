@@ -1,7 +1,8 @@
 import Image from 'next/image';
 
 import { Product } from '@/types/product';
-import { StarRating } from '../star-rating';
+
+import { StarRating } from '@/components/star-rating';
 
 export const ProductCard = ({ product }: { product: Product }) => (
   <div className="flex flex-row gap-4 md:block">
