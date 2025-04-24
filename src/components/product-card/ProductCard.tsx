@@ -7,7 +7,7 @@ export const ProductCard = ({ product }: { product: Product }) => (
   <div className="flex flex-row gap-4 md:block">
     <Image
       alt={`Image of ${product.title}`}
-      className="md:mb-10 md:m-auto"
+      className="w-auto h-auto md:mb-10 md:m-auto"
       height={100}
       src={product.image.url}
       width={100}
