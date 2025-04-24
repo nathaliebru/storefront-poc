@@ -14,7 +14,11 @@ export default async function Home() {
       <h1>Categories</h1>
       <div className="flex flex-col">
         {categories.map((category) => (
-          <Link href={category.slug} key={category.id}>
+          <Link
+            className="hover:underline"
+            href={category.slug}
+            key={category.id}
+          >
             {category.title}
           </Link>
         ))}
