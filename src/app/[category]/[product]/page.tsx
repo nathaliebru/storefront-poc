@@ -1,9 +1,24 @@
 import Image from 'next/image';
 
+import { categoriesQuery } from '@/services/graphql/queries/categories-query';
+import { Category } from '@/types/category';
 import { client } from '@/services/graphql/graphql-request-client';
 import type { Product } from '@/types/product';
 import { productQuery } from '@/services/graphql/queries/product-query';
 import { StarRating } from '@/components/star-rating';
+
+export async function generateStaticParams() {
+  const { categories } = await client.request<{
+    categories: Category[];
+  }>(categoriesQuery);
+
+  return categories.flatMap((category) =>
+    category.products.map((product) => ({
+      category: category.slug,
+      product: product.slug,
+    })),
+  );
+}
 
 export default async function Product({
   params,

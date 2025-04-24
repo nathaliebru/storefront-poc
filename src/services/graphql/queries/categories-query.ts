@@ -4,6 +4,9 @@ export const categoriesQuery = gql`
   query categories {
     categories {
       id
+      products {
+        slug
+      }
       slug
       title
     }

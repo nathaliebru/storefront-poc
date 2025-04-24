@@ -1,11 +1,12 @@
 import Link from 'next/link';
 
 import { categoriesQuery } from '@/services/graphql/queries/categories-query';
+import { Category } from '@/types/category';
 import { client } from '@/services/graphql/graphql-request-client';
 
 export default async function Home() {
   const { categories } = await client.request<{
-    categories: { slug: string; title: string; id: string }[];
+    categories: Category[];
   }>(categoriesQuery);
 
   return (
